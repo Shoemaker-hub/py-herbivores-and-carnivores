@@ -1,5 +1,5 @@
 class Animal:
-    alive = []
+    alive: list["Animal"] = []
 
     def __init__(
             self, name: str,
@@ -10,9 +10,8 @@ class Animal:
         self.name = name
         self.hidden = hidden
         Animal.alive.append(self)
-        print(self.__dict__)
 
-    def __repr__(self) -> None:
+    def __repr__(self) -> str:
         return (f"{{Name: {self.name}, "
                 f"Health: {self.health}, "
                 f"Hidden: {self.hidden}}}")
@@ -24,11 +23,16 @@ class Herbivore(Animal):
 
 
 class Carnivore(Animal):
-    @staticmethod
-    def bite(herbivore_animal: Herbivore) -> None:
-        if (herbivore_animal.hidden is True
-                or not isinstance(herbivore_animal, Herbivore)):
+    def bite(self, herbivore_animal: Herbivore) -> None:
+        if (type(self) is type(herbivore_animal)
+                or herbivore_animal.hidden is True):
             return
         herbivore_animal.health -= 50
         if herbivore_animal.health <= 0:
             Animal.alive.remove(herbivore_animal)
+
+
+if __name__ == "__main__":
+    lion = Carnivore("Lion")
+    zebra = Herbivore("Zebra")
+    lion.bite(zebra)
